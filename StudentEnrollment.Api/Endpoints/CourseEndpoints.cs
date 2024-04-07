@@ -21,6 +21,15 @@ public static class CourseEndpoints
         .WithOpenApi()
         .Produces<List<CourseDto>>(StatusCodes.Status200OK);
 
+        group.MapGet("/GetStudents/{id}", async (int id, ICourseRepository repo, IMapper mapper) =>
+        {
+            var courses = await repo.GetStudentList(id);
+            return mapper.Map<CourseDetailsDto>(courses);
+        })
+        .WithName("GetCourseDetailById")
+        .WithOpenApi()
+        .Produces<CourseDetailsDto>(StatusCodes.Status200OK);
+
         group.MapGet("/{id}", async  (int id, ICourseRepository repo, IMapper mapper) =>
         {
             return await repo.GetAsync(id)
@@ -42,7 +51,7 @@ public static class CourseEndpoints
             }
 
             mapper.Map(courseDto, foundModel);
-            repo.UpdateAsync(foundModel);
+            await repo.UpdateAsync(foundModel);
             return Results.NoContent();
         })
         .WithName("UpdateCourse")

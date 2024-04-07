@@ -15,7 +15,7 @@ public static class StudentEndpoints
         group.MapGet("/", async (IStudentRepository repo, IMapper mapper) =>
         {
             var students = await repo.GetAllAsync();
-            return mapper.Map<StudentDto>(students);
+            return mapper.Map<List<StudentDto>>(students);
         })
         .WithName("GetAllStudents")
         .WithOpenApi()
@@ -29,6 +29,18 @@ public static class StudentEndpoints
                     : Results.NotFound();
         })
         .WithName("GetStudentById")
+        .WithOpenApi()
+        .Produces<StudentDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
+        group.MapGet("/Student/GetDetails/{id}", async (int id, IStudentRepository repo, IMapper mapper) =>
+        {
+            return await repo.GetStudentDetails(id)
+                is Student model
+                    ? Results.Ok(mapper.Map<StudentDetailsDto>(model))
+                    : Results.NotFound();
+        })
+        .WithName("GetStudentDetailsById")
         .WithOpenApi()
         .Produces<StudentDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
@@ -50,7 +62,7 @@ public static class StudentEndpoints
         .Produces(StatusCodes.Status404NotFound)
         .Produces(StatusCodes.Status204NoContent);
 
-        group.MapPost("/", async (StudentDto studentDto, IStudentRepository repo, IMapper mapper) =>
+        group.MapPost("/", async (CreateStudentDto studentDto, IStudentRepository repo, IMapper mapper) =>
         {
             var student = mapper.Map<Student>(studentDto);
             await repo.AddAsync(student);
