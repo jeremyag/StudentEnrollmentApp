@@ -22,4 +22,8 @@
     <ProjectReference Include="..\StudentEnrollment.Data\StudentEnrollment.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Endpoints\" />
+  </ItemGroup>
+
 </Project>

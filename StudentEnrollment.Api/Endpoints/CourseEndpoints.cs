@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OpenApi;
 using StudentEnrollment.Data;
+using StudentEnrollment.Api.Dtos.Course;
 namespace StudentEnrollment.Api.Endpoints;
 
 public static class CourseEndpoints
@@ -12,7 +13,19 @@ public static class CourseEndpoints
 
         group.MapGet("/", async (StudentEnrollmentDbContext db) =>
         {
-            return await db.Courses.ToListAsync();
+            var data = new List<CourseDto>();
+            var courses = await db.Courses.ToListAsync();
+            foreach(var course in courses)
+            {
+                data.Add(new CourseDto()
+                {
+                    Title = course.Title,
+                    Credits = course.Credits,
+                    Id = course.Id
+                });
+            }
+
+            return data;
         })
         .WithName("GetAllCourses")
         .WithOpenApi();
@@ -28,7 +41,7 @@ public static class CourseEndpoints
         .WithName("GetCourseById")
         .WithOpenApi();
 
-        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int id, Course course, StudentEnrollmentDbContext db) =>
+        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int id, CourseDto course, StudentEnrollmentDbContext db) =>
         {
             var affected = await db.Courses
                 .Where(model => model.Id == id)
@@ -36,18 +49,19 @@ public static class CourseEndpoints
                     .SetProperty(m => m.Title, course.Title)
                     .SetProperty(m => m.Credits, course.Credits)
                     .SetProperty(m => m.Id, course.Id)
-                    .SetProperty(m => m.CreatedDate, course.CreatedDate)
-                    .SetProperty(m => m.CreatedBy, course.CreatedBy)
-                    .SetProperty(m => m.ModifiedDate, course.ModifiedDate)
-                    .SetProperty(m => m.ModifiedBy, course.ModifiedBy)
                     );
             return affected == 1 ? TypedResults.Ok() : TypedResults.NotFound();
         })
         .WithName("UpdateCourse")
         .WithOpenApi();
 
-        group.MapPost("/", async (Course course, StudentEnrollmentDbContext db) =>
+        group.MapPost("/", async (CreateCourseDto dto, StudentEnrollmentDbContext db) =>
         {
+            Course course = new Course()
+            {
+                Title= dto.Title,
+                Credits= dto.Credits,
+            };
             db.Courses.Add(course);
             await db.SaveChangesAsync();
             return TypedResults.Created($"/api/Course/{course.Id}",course);
