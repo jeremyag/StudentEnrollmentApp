@@ -4,21 +4,20 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace StudentEnrollment.Data.Configuration;
 
-internal class UserRoleConfiguration : IEntityTypeConfiguration<IdentityRole>
+internal class UserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<string>>
 {
-    public void Configure(EntityTypeBuilder<IdentityRole> builder)
+    public void Configure(EntityTypeBuilder<IdentityUserRole<string>> builder)
     {
         builder.HasData(
-            new IdentityRole
+            new IdentityUserRole<string>
             {
-                Name = "Administrator",
-                NormalizedName = "ADMINISTRATOR"
+                RoleId = "67a2d6e2-c096-4a73-8541-18e9a915c60d",
+                UserId = "408aa945-3d84-4421-8342-7269ec64d949"
             },
-            new IdentityRole
+            new IdentityUserRole<string>
             {
-                Name = "User",
-                NormalizedName = "USER"
-            }
-        );
+                RoleId = "504830c0-9bce-4981-a8a8-e2d47a4f7db2",
+                UserId = "3f4631bd-f907-4409-b416-ba356312e659"
+            });
     }
 }
