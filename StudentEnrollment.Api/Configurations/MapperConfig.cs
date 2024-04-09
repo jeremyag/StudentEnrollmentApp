@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StudentEnrollment.Api.Dtos.Authentication;
 using StudentEnrollment.Api.Dtos.Course;
 using StudentEnrollment.Api.Dtos.Enrollment;
 using StudentEnrollment.Api.Dtos.Student;
@@ -21,5 +22,7 @@ public class MapperConfig : Profile
         CreateMap<Student, CreateStudentDto>().ReverseMap();
         CreateMap<Student, StudentDetailsDto>()
             .ForMember(q => q.Courses, x => x.MapFrom(student => student.Enrollments.Select(course => course.Course)));
+
+        CreateMap<RegisterDto, SchoolUser>().ReverseMap();
     }
 }

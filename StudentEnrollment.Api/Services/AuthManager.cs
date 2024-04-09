@@ -20,7 +20,7 @@ public class AuthManager : IAuthManager
     }
     public async Task<AuthResponseDto> Login(LoginDto loginDto)
     {
-        _user = await _userManager.FindByEmailAsync(loginDto.Username);
+        _user = await _userManager.FindByEmailAsync(loginDto.EmailAddress);
         if (_user is null)
         {
             return default;
@@ -39,6 +39,27 @@ public class AuthManager : IAuthManager
             Token = token,
             UserId = _user.Id,
         };
+    }
+
+    public async Task<IEnumerable<IdentityError>> Register(RegisterDto registerDto)
+    {
+        _user = new SchoolUser
+        {
+            DateOfBirth = registerDto.DateOfBirth,
+            Email = registerDto.EmailAddress,
+            UserName = registerDto.EmailAddress,
+            FirstName = registerDto.FirstName,
+            LastName = registerDto.LastName
+        };
+
+        var result = await _userManager.CreateAsync(_user, registerDto.Password);
+
+        if(result.Succeeded)
+        {
+            await _userManager.AddToRoleAsync(_user, "User");
+        }
+
+        return result.Errors;
     }
 
     private async Task<string> GenerateTokenAsync()
