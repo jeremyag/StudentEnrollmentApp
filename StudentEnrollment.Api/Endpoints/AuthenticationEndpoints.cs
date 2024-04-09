@@ -27,6 +27,7 @@ public static class AuthenticationEndpoints
 
             return Results.Ok(response);
         })
+        .AllowAnonymous()
         .WithName("Login")
         .WithOpenApi()
         .Produces(StatusCodes.Status200OK)
@@ -54,6 +55,7 @@ public static class AuthenticationEndpoints
 
             return Results.BadRequest(errors);
         })
+        .AllowAnonymous()
         .WithName("Register")
         .WithOpenApi()
         .Produces(StatusCodes.Status200OK)
