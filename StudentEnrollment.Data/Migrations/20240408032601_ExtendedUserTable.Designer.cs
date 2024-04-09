@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentEnrollment.Data;
 
@@ -11,9 +12,11 @@ using StudentEnrollment.Data;
 namespace StudentEnrollment.Data.Migrations
 {
     [DbContext(typeof(StudentEnrollmentDbContext))]
-    partial class StudentEnrollmentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240408032601_ExtendedUserTable")]
+    partial class ExtendedUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,18 +151,6 @@ namespace StudentEnrollment.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "408aa945-3d84-4421-8342-7269ec64d949",
-                            RoleId = "67a2d6e2-c096-4a73-8541-18e9a915c60d"
-                        },
-                        new
-                        {
-                            UserId = "3f4631bd-f907-4409-b416-ba356312e659",
-                            RoleId = "504830c0-9bce-4981-a8a8-e2d47a4f7db2"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -348,44 +339,6 @@ namespace StudentEnrollment.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "408aa945-3d84-4421-8342-7269ec64d949",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "f4a049a9-c99e-41da-ba09-e66f6ee1cb0f",
-                            Email = "schooladmin@localhost.com",
-                            EmailConfirmed = true,
-                            FirstName = "School",
-                            LastName = "Admin",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "SCHOOLADMIN@LOCALHOST.COM",
-                            NormalizedUserName = "SCHOOLADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEL5P/NmbAoRlGKonPCDFx0+MBdHBl9HSJaUzQVuiSf0E0phWAXX1b8PDqL38dbUO+w==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "17a43d4a-3c0b-4c9c-a914-faa2674855e0",
-                            TwoFactorEnabled = false,
-                            UserName = "schooladmin@localhost.com"
-                        },
-                        new
-                        {
-                            Id = "3f4631bd-f907-4409-b416-ba356312e659",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "59019115-019e-461a-8d94-7e1f703689e3",
-                            Email = "schooluser@localhost.com",
-                            EmailConfirmed = true,
-                            FirstName = "School",
-                            LastName = "User",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "SCHOOLUSER@LOCALHOST.COM",
-                            NormalizedUserName = "SCHOOLUSER@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJk37qHj8TySaRZuecMM2D8nIm6w3fXzCt3i1BIuHm3I0G14KxIcOrJJq+86uuLbvQ==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "b0091705-27fb-47d7-987b-19f4b177ac6b",
-                            TwoFactorEnabled = false,
-                            UserName = "schooluser@localhost.com"
-                        });
                 });
 
             modelBuilder.Entity("StudentEnrollment.Data.Student", b =>

@@ -4,6 +4,7 @@ using StudentEnrollment.Data;
 using StudentEnrollment.Api.Dtos.Course;
 using AutoMapper;
 using StudentEnrollment.Data.Contracts;
+using Microsoft.AspNetCore.Authorization;
 namespace StudentEnrollment.Api.Endpoints;
 
 public static class CourseEndpoints
@@ -17,6 +18,7 @@ public static class CourseEndpoints
             var courses = await repo.GetAllAsync();
             return mapper.Map<List<CourseDto>>(courses);
         })
+        .AllowAnonymous()
         .WithName("GetAllCourses")
         .WithOpenApi()
         .Produces<List<CourseDto>>(StatusCodes.Status200OK);
@@ -26,26 +28,28 @@ public static class CourseEndpoints
             var courses = await repo.GetStudentList(id);
             return mapper.Map<CourseDetailsDto>(courses);
         })
+        .AllowAnonymous()
         .WithName("GetCourseDetailById")
         .WithOpenApi()
         .Produces<CourseDetailsDto>(StatusCodes.Status200OK);
 
-        group.MapGet("/{id}", async  (int id, ICourseRepository repo, IMapper mapper) =>
+        group.MapGet("/{id}", async (int id, ICourseRepository repo, IMapper mapper) =>
         {
             return await repo.GetAsync(id)
                 is Course model
                     ? Results.Ok(mapper.Map<CourseDto>(model))
                     : Results.NotFound();
         })
+        .AllowAnonymous()
         .WithName("GetCourseById")
         .WithOpenApi()
         .Produces<CourseDto>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound);
 
-        group.MapPut("/{id}", async  (int id, CourseDto courseDto, ICourseRepository repo, IMapper mapper) =>
+        group.MapPut("/{id}", async (int id, CourseDto courseDto, ICourseRepository repo, IMapper mapper) =>
         {
             var foundModel = await repo.GetAsync(id);
-            if(foundModel is null)
+            if (foundModel is null)
             {
                 return Results.NotFound();
             }
@@ -71,7 +75,7 @@ public static class CourseEndpoints
         .WithOpenApi()
         .Produces<CourseDto>(StatusCodes.Status201Created);
 
-        group.MapDelete("/{id}", async  (int id, ICourseRepository repo) =>
+        group.MapDelete("/{id}", [Authorize(Roles = "Administrator")] async (int id, ICourseRepository repo) =>
         {
             return await repo.DeleteAsync(id) ? Results.Ok() : Results.NotFound();
         })
