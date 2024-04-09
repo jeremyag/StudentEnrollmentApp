@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using StudentEnrollment.Api.Dtos;
 using StudentEnrollment.Api.Dtos.Authentication;
@@ -13,10 +14,17 @@ public static class AuthenticationEndpoints
 {
     public static void MapAuthenticationEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/login").WithTags("Authentication");
+        var group = routes.MapGroup("/api").WithTags("Authentication");
 
-        group.MapPost("/", async (LoginDto loginDto, IAuthManager authManager) =>
+        group.MapPost("/login/", async (IValidator<LoginDto> validator, LoginDto loginDto, IAuthManager authManager) =>
         {
+            var validationResult = await validator.ValidateAsync(loginDto);
+
+            var errors = new List<ErrorResponseDto>();
+            if (!validationResult.IsValid)
+            {
+                return Results.BadRequest(validationResult.ToDictionary());
+            }
             // Generate Token here..
             var response = await authManager.Login(loginDto);
 
